@@ -1,0 +1,68 @@
+# ============================================================
+# Access ↔ Notion CSV変換ツール 設定ファイル
+# ============================================================
+
+# --- エンコーディング ---
+access_encoding: cp932       # AccessのCSVエンコーディング（Shift-JIS）
+notion_encoding: utf-8-sig   # NotionのCSVエンコーディング（BOM付きUTF-8、Excel互換）
+                             # BOMなしUTF-8で出力したい場合は utf-8 に変更
+
+# --- ファイルパス ---
+master_table: data/マスターテーブル.csv          # to_notion の入力（AccessのCSV）
+output_notion: data/マスターテーブル_notion.csv  # to_notion の出力（Notion用CSV）
+
+input_notion: data/マスターテーブル_notion.csv   # to_access の入力（NotionエクスポートCSV）
+output_access: data/マスターテーブル_access.csv  # to_access の出力（Access用CSV）
+
+# --- FK列の定義 ---
+# マスターテーブルの各FK列と、参照先テーブルの対応を定義する
+# column  : マスターテーブルの列名
+# table   : 参照先テーブルのCSVファイル名
+# id_col  : 参照先テーブルのID列名
+# name_col: 参照先テーブルの名前列名（IDの代わりに使う値）
+
+foreign_keys:
+  - column: 設置建屋
+    table: data/建屋テーブル.csv
+    id_col: ID
+    name_col: 建屋
+
+  - column: 階
+    table: data/フロアテーブル.csv
+    id_col: ID
+    name_col: フロア
+
+  - column: ホスト情報
+    table: data/ホスト登録テーブル.csv
+    id_col: ID
+    name_col: ホスト名
+
+  - column: 所属
+    table: data/所属テーブル.csv
+    id_col: ID
+    name_col: 所属名
+
+  - column: 機種
+    table: data/機種テーブル.csv
+    id_col: ID
+    name_col: 機種名
+
+  - column: 種別
+    table: data/種別テーブル.csv
+    id_col: ID
+    name_col: 種別
+
+  - column: OS起動種別
+    table: data/OS起動種別テーブル.csv
+    id_col: ID
+    name_col: OS起動種別
+
+  - column: 4階層図用種別
+    table: data/4階層図用種別テーブル.csv
+    id_col: ID
+    name_col: 4階層図用種別
+
+  - column: ベンダー
+    table: data/ベンダーテーブル.csv
+    id_col: ID
+    name_col: 社名

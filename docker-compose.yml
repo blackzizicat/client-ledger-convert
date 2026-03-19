@@ -1,0 +1,6 @@
+services:
+  converter:
+    build: .
+    volumes:
+      - .:/data   # カレントディレクトリ（CSVファイルがある場所）をコンテナにマウント
+    working_dir: /data
