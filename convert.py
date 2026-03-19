@@ -109,6 +109,23 @@ def get_access_columns(master_table_path: str, encoding: str) -> list[str]:
         return next(reader)
 
 
+def _coerce_value(val: str):
+    """
+    文字列値を数値に変換できる場合は int/float に変換する。
+    csv.QUOTE_NONNUMERIC と組み合わせて、数値フィールドをクォートなし、
+    文字列フィールドをダブルクォートで囲んで出力するために使用する。
+    """
+    if val == "":
+        return val
+    try:
+        return int(val)
+    except ValueError:
+        try:
+            return float(val)
+        except ValueError:
+            return val
+
+
 def cmd_to_access(config: dict, input_override: str = None, output_override: str = None):
     """
     名前をIDに変換してShift-JIS CSVを出力する（Notion → Access方向）。
@@ -147,7 +164,10 @@ def cmd_to_access(config: dict, input_override: str = None, output_override: str
         if notion_only_cols:
             print(f"[除外] Notion独自列（Accessに存在しないため除外）: {notion_only_cols}")
 
-        writer = csv.DictWriter(fout, fieldnames=access_columns, extrasaction="ignore")
+        writer = csv.DictWriter(
+            fout, fieldnames=access_columns, extrasaction="ignore",
+            quoting=csv.QUOTE_NONNUMERIC
+        )
         writer.writeheader()
 
         for row_num, row in enumerate(reader, start=2):
@@ -165,7 +185,7 @@ def cmd_to_access(config: dict, input_override: str = None, output_override: str
                     pass
                 else:
                     warnings.append(f"行{row_num} 列「{col}」: 「{val}」に対応するIDが見つかりません")
-            writer.writerow(row)
+            writer.writerow({k: _coerce_value(v) for k, v in row.items()})
 
     if warnings:
         print("[警告] 以下の値はIDに変換できませんでした:")
